@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Prática de Letras</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="text"].error {
+            border-color: #dc3545;
+            background-color: #fff5f5;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .font-preview {
+            margin-top: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preview-text {
+            font-size: 48px;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .letter-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .letter-checkbox {
+            display: none;
+        }
+
+        .letter-label {
+            display: block;
+            padding: 15px;
+            text-align: center;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 24px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .letter-checkbox:checked + .letter-label {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .letter-label:hover {
+            border-color: #667eea;
+        }
+
+        .quick-select {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .quick-select button {
+            flex: none;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #667eea;
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de Prática de Letras</h1>
+        <p class="subtitle">Crie folhas de prática personalizadas com fontes do Google Fonts</p>
+
+        <div class="form-group">
+            <label for="fontSearch">Nome da Fonte (Google Fonts):</label>
+            <input type="text" id="fontSearch" placeholder="Ex: Playwrite PT Guides, Playwrite PT, Caveat..." value="Playwrite PT Guides">
+            <div class="error-message" id="fontError">Erro ao carregar a fonte. Verifique o nome e tente novamente.</div>
+            <div class="font-preview">
+                <div class="preview-text" id="fontPreview">AaBbCc 123</div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Selecione as Letras para Praticar:</label>
+            <div class="toggle-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="uppercaseOnly">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Apenas Maiúsculas</span>
+            </div>
+            <div class="toggle-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="lowercaseOnly">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Apenas Minúsculas</span>
+            </div>
+            <div class="quick-select">
+                <button class="btn-secondary" onclick="selectAllLetters()">Todas</button>
+                <button class="btn-secondary" onclick="selectVowels()">Vogais</button>
+                <button class="btn-secondary" onclick="clearAllLetters()">Limpar</button>
+            </div>
+            <div class="letter-options" id="letterOptions">
+                <!-- Letters will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Combinações de Letras:</label>
+            <div class="toggle-container">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="enableCombinations">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">Incluir Combinações</span>
+            </div>
+            <input type="text" id="combinations" placeholder="Ex: ai, ui, eu, ão" value="ai, ui, eu, ão" disabled>
+            <div style="margin-top: 8px; color: #666; font-size: 14px;">
+                Separe as combinações por vírgula
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-primary" onclick="generatePrintPreview()">Gerar Folhas de Prática</button>
+        </div>
+
+        <div class="loading" id="loading">Gerando folhas...</div>
+    </div>
+
+    <script>
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        const letterOptionsContainer = document.getElementById('letterOptions');
+        
+        // Populate letter checkboxes
+        alphabet.forEach(letter => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <input type="checkbox" class="letter-checkbox" id="letter-${letter}" value="${letter}">
+                <label class="letter-label" for="letter-${letter}">${letter}</label>
+            `;
+            letterOptionsContainer.appendChild(div);
+        });
+
+        // Load font preview
+        function loadFont() {
+            const fontName = document.getElementById('fontSearch').value.trim();
+            const fontInput = document.getElementById('fontSearch');
+            const fontError = document.getElementById('fontError');
+            
+            // Clear previous error state
+            fontInput.classList.remove('error');
+            fontError.classList.remove('show');
+            
+            if (!fontName) return;
+
+            const fontLink = document.getElementById('fontLink');
+            if (fontLink) fontLink.remove();
+
+            const link = document.createElement('link');
+            link.id = 'fontLink';
+            link.rel = 'stylesheet';
+            link.crossOrigin = 'anonymous';
+            const encodedFont = fontName.replace(/ /g, '+');
+            link.href = `https://fonts.googleapis.com/css2?family=${encodedFont}:wght@400;700&display=swap`;
+            
+            link.onload = () => {
+                // Check if font actually loaded by testing if it applies
+                document.getElementById('fontPreview').style.fontFamily = `"${fontName}", cursive`;
+                
+                // Clear error state on successful load
+                fontInput.classList.remove('error');
+                fontError.classList.remove('show');
+            };
+            
+            link.onerror = () => {
+                // Show error state
+                fontInput.classList.add('error');
+                fontError.classList.add('show');
+            };
+            
+            document.head.appendChild(link);
+            
+            // Set a timeout to detect if font failed to load
+            setTimeout(() => {
+                // If the link element failed (status 0 or error), show error
+                if (link.sheet === null) {
+                    fontInput.classList.add('error');
+                    fontError.classList.add('show');
+                }
+            }, 3000);
+        }
+
+        document.getElementById('fontSearch').addEventListener('input', loadFont);
+        loadFont();
+
+        // Handle combinations toggle
+        document.getElementById('enableCombinations').addEventListener('change', function() {
+            document.getElementById('combinations').disabled = !this.checked;
+        });
+
+        // Handle uppercase/lowercase toggles (mutually exclusive)
+        document.getElementById('uppercaseOnly').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('lowercaseOnly').checked = false;
+            }
+        });
+
+        document.getElementById('lowercaseOnly').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('uppercaseOnly').checked = false;
+            }
+        });
+
+        function selectAllLetters() {
+            document.querySelectorAll('.letter-checkbox').forEach(cb => cb.checked = true);
+        }
+
+        function selectVowels() {
+            clearAllLetters();
+            ['A', 'E', 'I', 'O', 'U'].forEach(letter => {
+                document.getElementById(`letter-${letter}`).checked = true;
+            });
+        }
+
+        function clearAllLetters() {
+            document.querySelectorAll('.letter-checkbox').forEach(cb => cb.checked = false);
+        }
+
+        function generatePrintPreview() {
+            const fontName = document.getElementById('fontSearch').value.trim();
+            const selectedLetters = Array.from(document.querySelectorAll('.letter-checkbox:checked')).map(cb => cb.value);
+            const enableCombinations = document.getElementById('enableCombinations').checked;
+            const combinationsInput = document.getElementById('combinations').value;
+            const combinations = enableCombinations ? combinationsInput.split(',').map(c => c.trim()).filter(c => c.length > 0) : [];
+            const uppercaseOnly = document.getElementById('uppercaseOnly').checked;
+            const lowercaseOnly = document.getElementById('lowercaseOnly').checked;
+
+            if (!fontName) {
+                alert('Por favor, insira o nome de uma fonte.');
+                return;
+            }
+
+            if (selectedLetters.length === 0 && combinations.length === 0) {
+                alert('Por favor, selecione pelo menos uma letra ou ative combinações.');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+
+            // Build HTML for print
+            let html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Prática de Letras</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@400;700&display=swap">
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "${fontName}", cursive;
+            background: white;
+        }
+        .page {
+            page-break-after: always;
+            width: 210mm;
+            height: 297mm;
+            padding: 20mm;
+            position: relative;
+        }
+        .page:last-child {
+            page-break-after: auto;
+        }
+        .section {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .line {
+            font-size: 48px;
+            color: #b0b0b0;
+            margin-bottom: 15mm;
+            white-space: nowrap;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            color-adjust: exact;
+        }
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .line {
+                color: #b0b0b0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+`;
+
+            // Generate pages for each selected letter
+            for (const letter of selectedLetters) {
+                html += generateLetterPage(letter, uppercaseOnly, lowercaseOnly);
+            }
+
+            // Generate pages for combinations
+            for (const combo of combinations) {
+                html += generateCombinationPage(combo);
+            }
+
+            html += `
+</body>
+</html>
+`;
+
+            // Open in new window
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(html);
+            printWindow.document.close();
+
+            // Wait for fonts to load, then auto-print
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                printWindow.focus();
+                printWindow.print();
+            }, 1000);
+        }
+
+        function generateLetterPage(letter, uppercaseOnly, lowercaseOnly) {
+            const showBothCases = !uppercaseOnly && !lowercaseOnly;
+            let html = '<div class="page">';
+
+            if (showBothCases) {
+                // Uppercase section
+                html += '<div class="section">';
+                html += generateLines(letter.toUpperCase());
+                html += '</div>';
+
+                // Lowercase section
+                html += '<div class="section">';
+                html += generateLines(letter.toLowerCase());
+                html += '</div>';
+            } else if (uppercaseOnly) {
+                // Only uppercase
+                html += '<div class="section" style="height: 100%;">';
+                html += generateLines(letter.toUpperCase());
+                html += '</div>';
+            } else {
+                // Only lowercase
+                html += '<div class="section" style="height: 100%;">';
+                html += generateLines(letter.toLowerCase());
+                html += '</div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function generateCombinationPage(combination) {
+            let html = '<div class="page">';
+            html += '<div class="section" style="height: 100%;">';
+            html += generateLines(combination);
+            html += '</div>';
+            html += '</div>';
+            return html;
+        }
+
+        function generateLines(text) {
+            let html = '';
+            const numLines = 3; // Number of practice lines per section
+
+            for (let i = 0; i < numLines; i++) {
+                const lineText = text + '_'.repeat(50);
+                html += `<div class="line">${lineText}</div>`;
+            }
+
+            return html;
+        }
+    </script>
+</body>
+</html>
