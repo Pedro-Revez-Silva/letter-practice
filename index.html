@@ -257,38 +257,43 @@
 </head>
 <body>
     <div class="container">
-        <h1>Gerador de Prática de Letras</h1>
-        <p class="subtitle">Crie folhas de prática personalizadas com fontes do Google Fonts</p>
+        <div style="text-align: right; margin-bottom: 20px;">
+            <button class="btn-secondary" onclick="switchLanguage()" style="padding: 8px 16px; font-size: 14px;">
+                <span id="langButton">🇬🇧 English</span>
+            </button>
+        </div>
+        <h1 id="title"></h1>
+        <p class="subtitle" id="subtitle"></p>
 
         <div class="form-group">
-            <label for="fontSearch">Nome da Fonte (Google Fonts):</label>
-            <input type="text" id="fontSearch" placeholder="Ex: Playwrite PT Guides, Playwrite PT, Caveat..." value="Playwrite PT Guides">
-            <div class="error-message" id="fontError">Erro ao carregar a fonte. Verifique o nome e tente novamente.</div>
+            <label for="fontSearch" id="labelFont"></label>
+            <input type="text" id="fontSearch" value="Playwrite PT Guides">
+            <div class="error-message" id="fontError"></div>
             <div class="font-preview">
                 <div class="preview-text" id="fontPreview">AaBbCc 123</div>
             </div>
         </div>
 
         <div class="form-group">
-            <label>Selecione as Letras para Praticar:</label>
+            <label id="labelLetters"></label>
             <div class="toggle-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="uppercaseOnly">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Apenas Maiúsculas</span>
+                <span class="toggle-label" id="labelUppercase"></span>
             </div>
             <div class="toggle-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="lowercaseOnly">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Apenas Minúsculas</span>
+                <span class="toggle-label" id="labelLowercase"></span>
             </div>
             <div class="quick-select">
-                <button class="btn-secondary" onclick="selectAllLetters()">Todas</button>
-                <button class="btn-secondary" onclick="selectVowels()">Vogais</button>
-                <button class="btn-secondary" onclick="clearAllLetters()">Limpar</button>
+                <button class="btn-secondary" onclick="selectAllLetters()" id="btnAll"></button>
+                <button class="btn-secondary" onclick="selectVowels()" id="btnVowels"></button>
+                <button class="btn-secondary" onclick="clearAllLetters()" id="btnClear"></button>
             </div>
             <div class="letter-options" id="letterOptions">
                 <!-- Letters will be populated by JavaScript -->
@@ -296,28 +301,103 @@
         </div>
 
         <div class="form-group">
-            <label>Combinações de Letras:</label>
+            <label id="labelCombinations"></label>
             <div class="toggle-container">
                 <label class="toggle-switch">
                     <input type="checkbox" id="enableCombinations">
                     <span class="toggle-slider"></span>
                 </label>
-                <span class="toggle-label">Incluir Combinações</span>
+                <span class="toggle-label" id="labelInclude"></span>
             </div>
-            <input type="text" id="combinations" placeholder="Ex: ai, ui, eu, ão" value="ai, ui, eu, ão" disabled>
-            <div style="margin-top: 8px; color: #666; font-size: 14px;">
-                Separe as combinações por vírgula
-            </div>
+            <input type="text" id="combinations" value="ai, ui, eu, ão" disabled>
+            <div style="margin-top: 8px; color: #666; font-size: 14px;" id="helpCombinations"></div>
         </div>
 
         <div class="button-group">
-            <button class="btn-primary" onclick="generatePrintPreview()">Gerar Folhas de Prática</button>
+            <button class="btn-primary" onclick="generatePrintPreview()" id="btnGenerate"></button>
         </div>
 
-        <div class="loading" id="loading">Gerando folhas...</div>
+        <div class="loading" id="loading"></div>
     </div>
 
     <script>
+        let currentLang = 'pt';
+
+        const translations = {
+            pt: {
+                title: 'Gerador de Prática de Letras',
+                subtitle: 'Crie folhas de prática personalizadas com fontes do Google Fonts',
+                labelFont: 'Nome da Fonte (Google Fonts):',
+                fontError: 'Erro ao carregar a fonte. Verifique o nome e tente novamente.',
+                fontPlaceholder: 'Ex: Playwrite PT Guides, Playwrite PT, Caveat...',
+                labelLetters: 'Selecione as Letras para Praticar:',
+                labelUppercase: 'Apenas Maiúsculas',
+                labelLowercase: 'Apenas Minúsculas',
+                btnAll: 'Todas',
+                btnVowels: 'Vogais',
+                btnClear: 'Limpar',
+                labelCombinations: 'Combinações de Letras:',
+                labelInclude: 'Incluir Combinações',
+                comboPlaceholder: 'Ex: ai, ui, eu, ão',
+                helpCombinations: 'Separe as combinações por vírgula',
+                btnGenerate: 'Gerar Folhas de Prática',
+                loading: 'Gerando folhas...',
+                alertNoFont: 'Por favor, insira o nome de uma fonte.',
+                alertNoLetters: 'Por favor, selecione pelo menos uma letra ou ative combinações.',
+                langButton: '🇬🇧 English'
+            },
+            en: {
+                title: 'Letter Practice Sheet Generator',
+                subtitle: 'Create custom practice sheets with Google Fonts',
+                labelFont: 'Font Name (Google Fonts):',
+                fontError: 'Error loading font. Check the name and try again.',
+                fontPlaceholder: 'E.g.: Playwrite PT Guides, Playwrite PT, Caveat...',
+                labelLetters: 'Select Letters to Practice:',
+                labelUppercase: 'Uppercase Only',
+                labelLowercase: 'Lowercase Only',
+                btnAll: 'All',
+                btnVowels: 'Vowels',
+                btnClear: 'Clear',
+                labelCombinations: 'Letter Combinations:',
+                labelInclude: 'Include Combinations',
+                comboPlaceholder: 'E.g.: ai, ui, eu, ão',
+                helpCombinations: 'Separate combinations with commas',
+                btnGenerate: 'Generate Practice Sheets',
+                loading: 'Generating sheets...',
+                alertNoFont: 'Please enter a font name.',
+                alertNoLetters: 'Please select at least one letter or enable combinations.',
+                langButton: '🇵🇹 Português'
+            }
+        };
+
+        function updateLanguage() {
+            const t = translations[currentLang];
+
+            document.getElementById('title').textContent = t.title;
+            document.getElementById('subtitle').textContent = t.subtitle;
+            document.getElementById('labelFont').textContent = t.labelFont;
+            document.getElementById('fontError').textContent = t.fontError;
+            document.getElementById('fontSearch').placeholder = t.fontPlaceholder;
+            document.getElementById('labelLetters').textContent = t.labelLetters;
+            document.getElementById('labelUppercase').textContent = t.labelUppercase;
+            document.getElementById('labelLowercase').textContent = t.labelLowercase;
+            document.getElementById('btnAll').textContent = t.btnAll;
+            document.getElementById('btnVowels').textContent = t.btnVowels;
+            document.getElementById('btnClear').textContent = t.btnClear;
+            document.getElementById('labelCombinations').textContent = t.labelCombinations;
+            document.getElementById('labelInclude').textContent = t.labelInclude;
+            document.getElementById('combinations').placeholder = t.comboPlaceholder;
+            document.getElementById('helpCombinations').textContent = t.helpCombinations;
+            document.getElementById('btnGenerate').textContent = t.btnGenerate;
+            document.getElementById('loading').textContent = t.loading;
+            document.getElementById('langButton').innerHTML = t.langButton;
+        }
+
+        function switchLanguage() {
+            currentLang = currentLang === 'pt' ? 'en' : 'pt';
+            updateLanguage();
+        }
+
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
         const letterOptionsContainer = document.getElementById('letterOptions');
         
@@ -426,12 +506,12 @@
             const lowercaseOnly = document.getElementById('lowercaseOnly').checked;
 
             if (!fontName) {
-                alert('Por favor, insira o nome de uma fonte.');
+                alert(translations[currentLang].alertNoFont);
                 return;
             }
 
             if (selectedLetters.length === 0 && combinations.length === 0) {
-                alert('Por favor, selecione pelo menos uma letra ou ative combinações.');
+                alert(translations[currentLang].alertNoLetters);
                 return;
             }
 
@@ -578,6 +658,9 @@
 
             return html;
         }
+
+        // Initialize language on page load
+        updateLanguage();
     </script>
 </body>
 </html>

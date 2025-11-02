@@ -18,21 +18,29 @@ I needed practice sheets for my daughter to learn Portuguese manuscript letters,
 - **Print-Ready Output**: Generates HTML pages optimized for A4 printing
 - **Guide Lines**: Automatically uses the font's built-in guide lines for proper letter formation
 
+## Available Languages
+
+The app includes a language switcher with:
+- **Portuguese (PT)** - Default
+- **English (EN)**
+
+Click the language button in the top right to switch between languages.
+
 ## How to Use
 
 1. **Open `index.html`** in your web browser
 2. **Enter a Google Font name** (e.g., "Playwrite PT Guides", "Playwrite PT", "Caveat")
 3. **Select letters** to practice:
    - Click individual letters
-   - Use "Todas" (All), "Vogais" (Vowels), or "Limpar" (Clear) buttons
+   - Use quick select buttons (All/Vowels/Clear)
 4. **Choose case options** (optional):
-   - Toggle "Apenas Maiúsculas" for uppercase only
-   - Toggle "Apenas Minúsculas" for lowercase only
+   - Toggle "Uppercase Only" for uppercase only
+   - Toggle "Lowercase Only" for lowercase only
    - Leave both off for both cases
 5. **Add combinations** (optional):
-   - Toggle "Incluir Combinações" on
+   - Toggle "Include Combinations" on
    - Enter letter combinations separated by commas
-6. **Click "Gerar Folhas de Prática"** (Generate Practice Sheets)
+6. **Click "Generate Practice Sheets"**
 7. **Print or Save as PDF** from your browser (Ctrl/Cmd+P)
 
 ## Page Format
@@ -67,9 +75,13 @@ Tested and working in:
 - Firefox
 - Safari
 
-## Language
+## Internationalization
 
-The interface is in Portuguese (PT) but can easily be adapted to other languages by editing the HTML text labels.
+The app includes a built-in language switcher supporting:
+- Portuguese (PT)
+- English (EN)
+
+Additional languages can be easily added by extending the `translations` object in the JavaScript code.
 
 ## License
 
