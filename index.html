@@ -245,6 +245,25 @@
             color: #555;
         }
 
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
         @media print {
             body {
                 background: white;
@@ -267,7 +286,10 @@
 
         <div class="form-group">
             <label for="fontSearch" id="labelFont"></label>
-            <input type="text" id="fontSearch" value="Playwrite PT Guides">
+            <a href="https://fonts.google.com/?query=Playwrite+Guide" target="_blank" style="color: #667eea; text-decoration: none; font-size: 14px; display: inline-block; margin-top: -5px;">
+                <span id="browseFonts"></span> →
+            </a>
+            <input type="text" id="fontSearch" value="Playwrite PT Guides" style="margin-top: 10px;">
             <div class="error-message" id="fontError"></div>
             <div class="font-preview">
                 <div class="preview-text" id="fontPreview">AaBbCc 123</div>
@@ -318,6 +340,10 @@
         </div>
 
         <div class="loading" id="loading"></div>
+
+        <div class="footer">
+            <span id="footerMadeBy"></span> <a href="https://pedrorevezsilva.me" target="_blank">Pedro Revez Silva</a>
+        </div>
     </div>
 
     <script>
@@ -328,6 +354,7 @@
                 title: 'Gerador de Prática de Letras',
                 subtitle: 'Crie folhas de prática personalizadas com fontes do Google Fonts',
                 labelFont: 'Nome da Fonte (Google Fonts):',
+                browseFonts: 'Procurar fontes',
                 fontError: 'Erro ao carregar a fonte. Verifique o nome e tente novamente.',
                 fontPlaceholder: 'Ex: Playwrite PT Guides, Playwrite PT, Caveat...',
                 labelLetters: 'Selecione as Letras para Praticar:',
@@ -344,12 +371,14 @@
                 loading: 'Gerando folhas...',
                 alertNoFont: 'Por favor, insira o nome de uma fonte.',
                 alertNoLetters: 'Por favor, selecione pelo menos uma letra ou ative combinações.',
-                langButton: '🇬🇧 English'
+                langButton: '🇬🇧 English',
+                footerMadeBy: 'Feito por'
             },
             en: {
                 title: 'Letter Practice Sheet Generator',
                 subtitle: 'Create custom practice sheets with Google Fonts',
                 labelFont: 'Font Name (Google Fonts):',
+                browseFonts: 'Browse fonts',
                 fontError: 'Error loading font. Check the name and try again.',
                 fontPlaceholder: 'E.g.: Playwrite PT Guides, Playwrite PT, Caveat...',
                 labelLetters: 'Select Letters to Practice:',
@@ -366,7 +395,8 @@
                 loading: 'Generating sheets...',
                 alertNoFont: 'Please enter a font name.',
                 alertNoLetters: 'Please select at least one letter or enable combinations.',
-                langButton: '🇵🇹 Português'
+                langButton: '🇵🇹 Português',
+                footerMadeBy: 'Made by'
             }
         };
 
@@ -376,6 +406,7 @@
             document.getElementById('title').textContent = t.title;
             document.getElementById('subtitle').textContent = t.subtitle;
             document.getElementById('labelFont').textContent = t.labelFont;
+            document.getElementById('browseFonts').textContent = t.browseFonts;
             document.getElementById('fontError').textContent = t.fontError;
             document.getElementById('fontSearch').placeholder = t.fontPlaceholder;
             document.getElementById('labelLetters').textContent = t.labelLetters;
@@ -391,6 +422,7 @@
             document.getElementById('btnGenerate').textContent = t.btnGenerate;
             document.getElementById('loading').textContent = t.loading;
             document.getElementById('langButton').innerHTML = t.langButton;
+            document.getElementById('footerMadeBy').textContent = t.footerMadeBy;
         }
 
         function switchLanguage() {
